@@ -15,6 +15,7 @@ public class TaskController {
 
     @PostMapping("/create_task")
     public TaskModel create(@RequestBody TaskModel taskModel){
+        System.out.println("chegou no controller");
         return this.taskRepository.save(taskModel);
     }
 }
