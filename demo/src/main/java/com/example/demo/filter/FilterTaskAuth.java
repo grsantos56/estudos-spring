@@ -1,16 +1,34 @@
 package com.example.demo.filter;
 
 import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Base64;
 
 @Component
-public class FilterTaskAuth implements Filter {
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        System.out.println("chegou no filtro");
-        chain.doFilter(request,  response);
-    }
+public class FilterTaskAuth extends OncePerRequestFilter {
 
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        var autorization = request.getHeader("Authorization");
+        var authEncoded = autorization.substring("Basic ".length()).trim();
+
+        byte[] authDecoded = Base64.getDecoder().decode(authEncoded);
+
+        var authString = new String(authDecoded);
+
+        String[] credentials = authString.split(":");
+        String username = credentials[0];
+        String password = credentials[1];
+
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+
+        filterChain.doFilter(request, response);
+    }
 }
