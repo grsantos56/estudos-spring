@@ -3,12 +3,10 @@ package com.example.demo.todolist;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,7 +16,7 @@ public class TaskController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @PostMapping("/create_task")
+    @PostMapping("/")
     public ResponseEntity create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
         System.out.println("chegou no controller" + request.getAttribute("userId"));
 
@@ -32,6 +30,14 @@ public class TaskController {
             return ResponseEntity.status(400).body("End date must be after start date");
         }
 
-        return ResponseEntity.status(200).body(taskModel);
+        var taskCreated = this.taskRepository.save(taskModel);
+        return ResponseEntity.status(200).body(taskCreated);
+    }
+
+    @GetMapping("/")
+    public List<TaskModel> list(HttpServletRequest request){
+        var userId = request.getAttribute("userId");
+        var tasks = this.taskRepository.findByUserId((UUID) userId);
+        return tasks;
     }
 }
