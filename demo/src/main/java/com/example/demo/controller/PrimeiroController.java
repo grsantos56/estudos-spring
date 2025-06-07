@@ -13,3 +13,5 @@ public class PrimeiroController {
         return "Hello, World!";
     }
 }
+
+// This is a simple Spring Boot controller that handles requests to the "/primeiro/hello" endpoint.
